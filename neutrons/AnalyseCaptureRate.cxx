@@ -70,6 +70,7 @@ int main(int argc, char** argv) {
 
   int nPrimaryNeutrons   = 0;
   int nSecondaryNeutrons = 0;
+  int nCapturesOnLAr     = 0;
   std::vector<std::string> materials;
   std::vector<Capture*>     Captures;
 
@@ -95,8 +96,8 @@ int main(int argc, char** argv) {
 	if (it == itt) inVector = true;
       if (!inVector) materials.push_back(it);
     }
-    std::cout << std::endl;
   }
+  std::cout << std::endl;
 
   // --- Main Analysis Loop -----------------------------------------------------
   for (int CurrentEvent=0; CurrentEvent<fNEvent; ++CurrentEvent) {
@@ -130,6 +131,10 @@ int main(int argc, char** argv) {
 	for (size_t itt=0; itt<im->True_Bck_Mother->size(); ++itt) 
 	  if ((*im->True_Bck_Mother)[itt] == (*im->True_Bck_ID)[it] && (*im->True_Bck_PDG)[itt] == 22) 
 	    photons.push_back((*im->True_Bck_Energy)[itt]);
+
+      // --- Count the number of captures on LAr
+      if (isNeutron && isCaptured && (*im->True_Bck_EndMaterial)[it] == "LAr")
+	nCapturesOnLAr++;
 	    
       if (isNeutron && isCaptured) {
 	Capture *cap = new Capture((*im->True_Bck_EndMaterial)[it],
@@ -191,7 +196,18 @@ int main(int argc, char** argv) {
   for (size_t it=0; it<materials.size(); ++it)
     capTypeE->GetXaxis()->SetBinLabel(it+1, materials[it].c_str());
   c->Print((outFileDir+OutFileName+".pdf").c_str());
-
   c->Print((outFileDir+OutFileName+".pdf]").c_str());
+
+  std::cout << std::endl;
+  std::cout << "Neutron capture statistics" << std::endl;
+  std::cout << "-----------------------------------------" << std::endl;
+  std::cout << std::endl;
+  std::cout << "Number of primary neutrons:        \t" << nPrimaryNeutrons << std::endl; 
+  std::cout << "Number of captures on LAr:         \t" << nCapturesOnLAr   << std::endl;
+  std::cout << "Radiological neutron capture rate: \t" << (double)nCapturesOnLAr / ((double)nPrimaryNeutrons * 2 * 2.246e-3) 
+	    << " [Hz]" << std::endl;
+
+
+
 
 }
