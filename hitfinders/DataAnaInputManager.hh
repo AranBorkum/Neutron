@@ -83,6 +83,10 @@ public:
   void LoadTree() {
     Initialise();
 
+    t_Input->SetBranchAddress("Run"          , &Run       );
+    t_Input->SetBranchAddress("SubRun"       , &SubRun    );
+    t_Input->SetBranchAddress("Event"        , &Event     );
+
     t_Input->SetBranchAddress("Hit_View"     , &Hit_View     );
     t_Input->SetBranchAddress("Hit_Size"     , &Hit_Size     );
     t_Input->SetBranchAddress("Hit_TPC"	     , &Hit_TPC	     );

@@ -1,44 +1,28 @@
-project(NeutronWork)
-message(${CMAKE_CXX_COMPILER})
-# You need to tell CMake where to find the ROOT installation. This can be done in a number of ways:
-#   - ROOT built with classic configure/make use the provided $ROOTSYS/etc/cmake/FindROOT.cmake
-#   - ROOT built with CMake. Add in CMAKE_PREFIX_PATH the installation prefix for ROOT
-list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
+cmake_minimum_required(VERSION 3.6)
+project(eventDisplay CXX)
+find_package( ZLIB REQUIRED )
+include_directories($ENV{BOOST_INC})
+include_directories($ENV{CANVAS_INC})
+include_directories($ENV{CANVAS_ROOT_IO_INC})
+include_directories($ENV{CETLIB_EXCEPT_INC})
+include_directories($ENV{CETLIB_INC})
+include_directories($ENV{FHICLCPP_INC})
+include_directories($ENV{GALLERY_INC})
+include_directories($ENV{LARCOREOBJ_INC})
+include_directories($ENV{LARDATAOBJ_INC})
+include_directories($ENV{NUSIMDATA_INC})
+include_directories($ENV{ROOT_INC})
+include_directories($ENV{HEP_CONCURRENCY_INC})
+link_directories($ENV{ROOTSYS}/lib $ENV{CANVAS_LIB} $ENV{CETLIB_EXCEPT_LIB} $ENV{CETLIB_LIB} $ENV{GALLERY_LIB} $ENV{NUSIMDATA_LIB} $ENV{LARCOREOBJ_LIB} $ENV{LARDATAOBJ_LIB} $ENV{BOOST_LIB})
 
-#---Locate the ROOT package and defines a number of variables (e.g. ROOT_INCLUDE_DIRS)
-find_package(ROOT REQUIRED COMPONENTS RIO Net XMLIO)
-find_program(LSB_RELEASE_EXEC lsb_release)
-find_package(TBB REQUIRED)
-include(${ROOT_USE_FILE})
-string(CONCAT CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -Wall -Wextra -Wpedantic -Werror")
+add_executable(EfficiencyCalculator EfficiencyCalculator.cxx)
+set_property(TARGET EfficiencyCalculator PROPERTY CXX_STANDARD 17)
+target_link_libraries(EfficiencyCalculator Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc pthread canvas cetlib_except cetlib gallery nusimdata_SimulationBase larcoreobj_SummaryData lardataobj_RecoBase lardataobj_RawData boost_program_options ${ZLIB_LIBRARIES})
 
-execute_process(COMMAND ${LSB_RELEASE_EXEC} -is
-  OUTPUT_VARIABLE LSB_RELEASE_ID_SHORT
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
+add_executable(MultiEfficiencyCalculator MultiEfficiencyCalculator.cxx)
+set_property(TARGET MultiEfficiencyCalculator PROPERTY CXX_STANDARD 17)
+target_link_libraries(MultiEfficiencyCalculator Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc pthread canvas cetlib_except cetlib gallery nusimdata_SimulationBase larcoreobj_SummaryData lardataobj_RecoBase lardataobj_RawData boost_program_options ${ZLIB_LIBRARIES})
 
-
-string(FIND "${LSB_RELEASE_ID_SHORT}" "Scientific" _cmp)
-if (_cmp GREATER -1)
-  set(Boost_NO_BOOST_CMAKE ON)
-else()
-  string(CONCAT CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -std=c++1y")
-endif()
-
-find_package(Boost REQUIRED)
-#find_package(Gperftools REQUIRED)
-#---Define useful ROOT functions and macros (e.g. ROOT_GENERATE_DICTIONARY)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${Boost_INCLUDE_DIRS})
-
-add_library(HitFinder SHARED Hit.cc)
-target_link_libraries(HitFinder ${ROOT_LIBRARIES})
-
-add_executable(AnalyseArbitraryAna AnalyseArbitraryAna.cxx)
-target_link_libraries(AnalyseArbitraryAna HitFinder)
-
-add_executable(AnalyseProtoDUNE AnalyseProtoDUNE.cxx)
-target_link_libraries(AnalyseProtoDUNE HitFinder)
-
-add_executable(AnalyseHitFinder AnalyseHitFinder.cxx)
-target_link_libraries(AnalyseHitFinder HitFinder)
+add_executable(CompareIdealWithReal CompareIdealWithReal.cxx)
+set_property(TARGET CompareIdealWithReal PROPERTY CXX_STANDARD 17)
+target_link_libraries(CompareIdealWithReal Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc pthread canvas cetlib_except cetlib gallery nusimdata_SimulationBase larcoreobj_SummaryData lardataobj_RecoBase lardataobj_RawData boost_program_options ${ZLIB_LIBRARIES})

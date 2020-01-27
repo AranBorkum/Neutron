@@ -9,6 +9,7 @@
 #include "InputManager.hh"
 #include "Capture.hh"
 
+#include <fstream>
 #include <iostream>
 #include <unistd.h>
 
@@ -76,11 +77,11 @@ int main(int argc, char** argv) {
 
   TH1D     *neutronGenE = new TH1D    ("neutronGenE", "neutronGenE",  200, 0, 10);
   TH1D     *gammaCapE   = new TH1D    ("gammaCapE"  , "gammaCapE"  , 1000, 0, 10);
-  TH1D     *endMaterial = new TH1D    ("endMaterial", "endMaterial",   10, 0, 10);
+  TH1D     *endMaterial = new TH1D    ("endMaterial", "endMaterial",   11, 0, 11);
   TH1D     *nGamma      = new TH1D    ("nGamma"     , "nGamma"     ,   15, 0, 15);
   TH2D     *nCaptureXY  = new TH2D    ("nCaptureXY" , "nCaptureXY" ,  500, -1300,  1300,  500, -1500, 3000);
-  TH2D     *nCaptureYZ  = new TH2D    ("nCaptureYZ" , "nCaptureYZ" , 8000, -1000, 15000, 2000, -1300, 3000);
-  TProfile *capTypeE    = new TProfile("capTypeE"   , "capTypeE"   ,   10,     0,    10,    0,    20);
+  TH2D     *nCaptureYZ  = new TH2D    ("nCaptureYZ" , "nCaptureYZ" , 8000, -1000,  15000, 2000, -1300, 3000);
+  TProfile *capTypeE    = new TProfile("capTypeE"   , "capTypeE"   ,   11,     0,    11,    0,    20);
 
   // --- Get list of all of the materials in the TTree
   for (int CurrentEvent=0; CurrentEvent<fNEvent; ++CurrentEvent) {
@@ -173,17 +174,38 @@ int main(int argc, char** argv) {
   // --- Print everything to the TCanvas
   TCanvas *c = new TCanvas("c", "c");
   c->Print((outFileDir+OutFileName+".pdf[").c_str());
+
+  nCaptureXY->Draw("COLZ");
+  nCaptureXY->SetStats(0);
+  nCaptureXY->GetXaxis()->SetTitle("X Coordinate [cm]");
+  nCaptureXY->GetYaxis()->SetTitle("Y Coordinate [cm]");
+  c->Print((outFileDir+OutFileName+".pdf").c_str());
+ 
+  nCaptureYZ->Draw("COLZ");
+  nCaptureYZ->SetStats(0);
+  nCaptureYZ->GetXaxis()->SetTitle("Z Coordinate [cm]");
+  nCaptureYZ->GetYaxis()->SetTitle("Y Coordinate [cm]");
+  c->Print((outFileDir+OutFileName+".pdf").c_str());
+
   neutronGenE->Draw();
+  neutronGenE->SetStats(0);
+  neutronGenE->GetXaxis()->SetTitle("Kinetic Energy [MeV]");
   c->Print((outFileDir+OutFileName+".pdf").c_str());
 
   nGamma->Draw();
+  nGamma->SetStats(0);
+  nGamma->GetXaxis()->SetTitle("Number of Photons");
   c->Print((outFileDir+OutFileName+".pdf").c_str());
 
   gammaCapE->Draw();
+  gammaCapE->SetStats(0);
+  gammaCapE->GetXaxis()->SetTitle("Sum Photon Energy [MeV]");
   c->Print((outFileDir+OutFileName+".pdf").c_str());
 
   c->SetLogy(1);
   endMaterial->Draw();
+  endMaterial->SetStats(0);
+  endMaterial->GetXaxis()->SetLabelSize(0.04);
   endMaterial->SetBit(TAxis::kLabelsHori);
   for (size_t it=0; it<materials.size(); ++it)
     endMaterial->GetXaxis()->SetBinLabel(it+1, materials[it].c_str());
@@ -192,7 +214,10 @@ int main(int argc, char** argv) {
 
   c->SetLogy(0);
   capTypeE->Draw();
+  capTypeE->SetStats(0);
+  capTypeE->GetYaxis()->SetTitle("Sum Photon Energy [MeV]");
   capTypeE->SetBit(TAxis::kLabelsHori);
+  capTypeE->GetXaxis()->SetLabelSize(0.04);
   for (size_t it=0; it<materials.size(); ++it)
     capTypeE->GetXaxis()->SetBinLabel(it+1, materials[it].c_str());
   c->Print((outFileDir+OutFileName+".pdf").c_str());
@@ -207,7 +232,15 @@ int main(int argc, char** argv) {
   std::cout << "Radiological neutron capture rate: \t" << (double)nCapturesOnLAr / ((double)nPrimaryNeutrons * 2 * 2.246e-3) 
 	    << " [Hz]" << std::endl;
 
-
-
+  std::ofstream file;
+  file.open((outFileDir+OutFileName+".txt").c_str());
+  file << "Neutron capture statistics" << std::endl;
+  file << "-----------------------------------------" << std::endl;
+  file << std::endl;
+  file << "Number of primary neutrons:        \t" << nPrimaryNeutrons << std::endl; 
+  file << "Number of captures on LAr:         \t" << nCapturesOnLAr   << std::endl;
+  file << "Radiological neutron capture rate: \t" << (double)nCapturesOnLAr / ((double)nPrimaryNeutrons * 2 * 2.246e-3) 
+       << " [Hz]" << std::endl;
+  file.close();
 
 }

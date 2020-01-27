@@ -17,7 +17,7 @@ link_directories($ENV{ROOTSYS}/lib $ENV{CANVAS_LIB} $ENV{CETLIB_EXCEPT_LIB} $ENV
 
 add_executable(RunEventDisplay RunEventDisplay.cxx)
 set_property(TARGET RunEventDisplay PROPERTY CXX_STANDARD 17)
-target_link_libraries(RunEventDisplay Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc pthread canvas cetlib_except cetlib gallery nusimdata_SimulationBase larcoreobj_SummaryData lardataobj_RecoBase boost_program_options ${ZLIB_LIBRARIES})
+target_link_libraries(RunEventDisplay Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc pthread canvas cetlib_except cetlib gallery nusimdata_SimulationBase larcoreobj_SummaryData lardataobj_RecoBase lardataobj_RawData boost_program_options ${ZLIB_LIBRARIES})
 
 add_executable(DisplayEventInformation DisplayEventInformation.cxx)
 set_property(TARGET DisplayEventInformation PROPERTY CXX_STANDARD 17)
@@ -26,3 +26,27 @@ target_link_libraries(DisplayEventInformation Core RIO Net Hist Graf Graf3d Gpad
 add_executable(MiniDisplay MiniDisplay.cxx)
 set_property(TARGET MiniDisplay PROPERTY CXX_STANDARD 17)
 target_link_libraries(MiniDisplay Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc pthread canvas cetlib_except cetlib gallery nusimdata_SimulationBase larcoreobj_SummaryData lardataobj_RecoBase boost_program_options ${ZLIB_LIBRARIES})
+
+add_executable(MCC11Display MCC11Display.cxx)
+set_property(TARGET MCC11Display PROPERTY CXX_STANDARD 17)
+target_link_libraries(MCC11Display Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc pthread canvas cetlib_except cetlib gallery nusimdata_SimulationBase larcoreobj_SummaryData lardataobj_RecoBase boost_program_options ${ZLIB_LIBRARIES})
+
+add_executable(DumpWaveform DumpWaveform.cxx)
+set_property(TARGET DumpWaveform PROPERTY CXX_STANDARD 17)
+target_link_libraries(DumpWaveform Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc pthread canvas cetlib_except cetlib gallery nusimdata_SimulationBase larcoreobj_SummaryData lardataobj_RecoBase boost_program_options ${ZLIB_LIBRARIES})
+
+add_executable(PrintRawDigits PrintRawDigits.cxx)
+set_property(TARGET PrintRawDigits PROPERTY CXX_STANDARD 17)
+target_link_libraries(PrintRawDigits Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc pthread canvas cetlib_except cetlib gallery nusimdata_SimulationBase larcoreobj_SummaryData lardataobj_RecoBase lardataobj_RawData boost_program_options ${ZLIB_LIBRARIES})
+
+add_executable(TPCHeatMap TPCHeatMap.cxx)
+set_property(TARGET TPCHeatMap PROPERTY CXX_STANDARD 17)
+target_link_libraries(TPCHeatMap Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc pthread canvas cetlib_except cetlib gallery nusimdata_SimulationBase larcoreobj_SummaryData lardataobj_RecoBase lardataobj_RawData boost_program_options ${ZLIB_LIBRARIES})
+
+add_executable(RawEventInformation RawEventInformation.cxx)
+set_property(TARGET RawEventInformation PROPERTY CXX_STANDARD 17)
+target_link_libraries(RawEventInformation Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc pthread canvas cetlib_except cetlib gallery nusimdata_SimulationBase larcoreobj_SummaryData lardataobj_RecoBase lardataobj_RawData boost_program_options ${ZLIB_LIBRARIES})
+
+add_executable(EventDisplay EventDisplay.cxx)
+set_property(TARGET EventDisplay PROPERTY CXX_STANDARD 17)
+target_link_libraries(EventDisplay Core RIO Net Hist Graf Graf3d Gpad Tree Rint Postscript Matrix Physics MathCore Thread MultiProc pthread canvas cetlib_except cetlib gallery nusimdata_SimulationBase larcoreobj_SummaryData lardataobj_RecoBase lardataobj_RawData boost_program_options ${ZLIB_LIBRARIES})

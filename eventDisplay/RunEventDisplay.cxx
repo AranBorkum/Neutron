@@ -12,6 +12,16 @@
 #include "TStyle.h"
 #include "TPad.h"
 
+#include "canvas/Utilities/InputTag.h"
+#include "gallery/Event.h"
+
+#include "lardataobj/Simulation/SimChannel.h"
+#include "lardataobj/RawData/RawDigit.h"
+#include "lardataobj/RawData/RDTimeStamp.h"
+#include "larcoreobj/SimpleTypesAndConstants/RawTypes.h"
+#include "larcoreobj/SimpleTypesAndConstants/geo_vectors.h"
+#include "lardataobj/RawData/raw.h"
+
 #include "DataAnaInputManager.hh"
 
 #include "boost/program_options.hpp"
@@ -20,23 +30,23 @@ namespace po = boost::program_options;
 
 void PlotTH2D(TH2D* h, std::string title="") {
 
-    Double_t max = h->GetMaximum();
-    Double_t min = h->GetMinimum();
-    Double_t vw  = 20.;
-    Double_t pw  = (vw-min)/(max-min);
-    Double_t e   = 0.01;
-    Double_t l   = 0.9;
+    // Double_t max = h->GetMaximum();
+    // Double_t min = h->GetMinimum();
+    // Double_t vw  = 20.;
+    // Double_t pw  = (vw-min)/(max-min);
+    // Double_t e   = 0.01;
+    // Double_t l   = 0.9;
 
-    const Int_t Number = 6;
-    Double_t Red[Number]   = { 0.0, l  , 1., 1., 1.0, 1.0};
-    Double_t Green[Number] = { 0.0, l  , 1., 1., l  , 0.0};
-    Double_t Blue[Number]  = { 1.0, 1.0, 1., 1., l  , 0.0};
-    Double_t Stops[Number] = { 0., pw-e, pw-e, pw+e, pw+e, 1. };
+    // const Int_t Number = 6;
+    // Double_t Red[Number]   = { 0.0, l  , 1., 1., 1.0, 1.0};
+    // Double_t Green[Number] = { 0.0, l  , 1., 1., l  , 0.0};
+    // Double_t Blue[Number]  = { 1.0, 1.0, 1., 1., l  , 0.0};
+    // Double_t Stops[Number] = { 0., pw-e, pw-e, pw+e, pw+e, 1. };
 
-    Int_t nb= 256;
-    h->SetContour(nb);
-    h->SetStats(0);
-    TColor::CreateGradientColorTable(Number,Stops,Red,Green,Blue,nb);
+    // Int_t nb= 256;
+    // h->SetContour(nb);
+    // h->SetStats(0);
+    // TColor::CreateGradientColorTable(Number,Stops,Red,Green,Blue,nb);
     h->SetTitle("");
     h->GetXaxis()->SetTitle("Time [ticks]");
     h->GetYaxis()->SetTitle("Channel");
@@ -47,20 +57,26 @@ int main(int argc, char** argv) {
 
   po::options_description desc("Allowed options");
   desc.add_options()
-    ("help,h"   , "produce help message")
-    ("input,i"  , po::value<std::string>(), "Input ROOT file")
-    ("output,o" , po::value<std::string>(), "Output file name")
-    ("text,t"   , po::value<std::string>(), "Input text file")
-    ("nevent,n" , po::value<int        >()->default_value(1), "Event number to process")
-    ("nskip"    , po::value<int        >()->default_value(0), "Number of events to skip")
-    ("tpc"      , po::value<int        >()->default_value(3), "TPC to make event display for")
-    ("threshold", po::value<std::string>(), "The ADC threshold for the hit finder")
-    ("plot-hits", "Plot event displays with hits")
-    ("only-hits", "Plot only the hits");
+    ("help,h"    , "produce help message")
+    ("input,i"   , po::value<std::string>(), "Input ROOT file")
+    ("Input,I"   , po::value<std::string>(), "Raw datafile ROOT input")
+    ("output,o"  , po::value<std::string>(), "Output file name")
+    ("nevent,n"  , po::value<int        >()->default_value(1), "Event number to process")
+    ("nskip"     , po::value<int        >()->default_value(0), "Number of events to skip")
+    ("tpc"       , po::value<int        >()->default_value(3), "TPC to make event display for")
+    ("tag,g"     , po::value<std::string>()->default_value("daq"), "daq tag")
+    ("threshold" , po::value<std::string>(), "The ADC threshold for the hit finder")
+    ("plot-hits" , "Plot event displays with hits")
+    ("only-hits" , "Plot only the hits")
+    ("compressed", "Using compressed ADC values");
 
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
   po::notify(vm);
+
+  if(vm.count("help") || vm.empty()) {
+    std::cout << desc << "\n"; return 1;
+  }
 
   DataAnaInputManager *im = new DataAnaInputManager();
   im->SetInputFile(vm["input"].as<std::string>());
@@ -109,52 +125,117 @@ int main(int argc, char** argv) {
     }
   }
 
-  std::cout << "Number of collection hits: " << colHits << std::endl;
-  std::cout << "Number of induction hits:  " << indHits << std::endl;
-  std::cout << std::endl;
-
-  int TimeU_min = *std::min_element(Times_U.begin(), Times_U.end()); 
-  int TimeV_min = *std::min_element(Times_V.begin(), Times_V.end()); 
-  int TimeZ_min = *std::min_element(Times_Z.begin(), Times_Z.end()); 
+  int TimeU_min    = *std::min_element(Times_U.begin()   , Times_U.end()   ); 
+  int TimeV_min    = *std::min_element(Times_V.begin()   , Times_V.end()   ); 
+  int TimeZ_min    = *std::min_element(Times_Z.begin()   , Times_Z.end()   ); 
   int ChannelU_min = *std::min_element(Channels_U.begin(), Channels_U.end());
   int ChannelV_min = *std::min_element(Channels_V.begin(), Channels_V.end());
   int ChannelZ_min = *std::min_element(Channels_Z.begin(), Channels_Z.end());
 
-  TH2D *eventDisplay_U = new TH2D("eventDisplay_U", "eventDisplay_U", 600, TimeU_min, TimeU_max, 250, ChannelU_min, ChannelU_max);
-  TH2D *eventDisplay_V = new TH2D("eventDisplay_V", "eventDisplay_V", 600, TimeV_min, TimeV_max, 250, ChannelV_min, ChannelV_max);
-  TH2D *eventDisplay_Z = new TH2D("eventDisplay_Z", "eventDisplay_Z", 600, TimeZ_min, TimeZ_max, 250, ChannelZ_min, ChannelZ_max);
+  int tBinsU = (TimeU_max - TimeU_min      ) / 10;
+  int tBinsV = (TimeV_max - TimeV_min      ) / 10;
+  int tBinsZ = (TimeZ_max - TimeZ_min      ) / 10;
+  int cBinsU = (ChannelU_max - ChannelU_min) / 4;
+  int cBinsV = (ChannelV_max - ChannelV_min) / 4;
+  int cBinsZ = (ChannelZ_max - ChannelZ_min) / 4;
 
-  std::ifstream infile(vm["text"].as<std::string>());
-  std::string line;
+  // TH2D *eventDisplay_U = new TH2D("eventDisplay_U", "eventDisplay_U", tBinsU, TimeU_min, TimeU_max, cBinsU, ChannelU_min, ChannelU_max);
+  // TH2D *eventDisplay_V = new TH2D("eventDisplay_V", "eventDisplay_V", tBinsV, TimeV_min, TimeV_max, cBinsV, ChannelV_min, ChannelV_max);
+  // TH2D *eventDisplay_Z = new TH2D("eventDisplay_Z", "eventDisplay_Z", tBinsZ, TimeZ_min, TimeZ_max, cBinsZ, ChannelZ_min, ChannelZ_max);
+  TH2D *eventDisplay_U = new TH2D("eventDisplay_U", "eventDisplay_U", 600, 0, 6000, cBinsU, ChannelU_min, ChannelU_max);
+  TH2D *eventDisplay_V = new TH2D("eventDisplay_V", "eventDisplay_V", 600, 0, 6000, cBinsV, ChannelV_min, ChannelV_max);
+  TH2D *eventDisplay_Z = new TH2D("eventDisplay_Z", "eventDisplay_Z", 600, 0, 6000, cBinsZ, ChannelZ_min, ChannelZ_max);
 
-  while (std::getline(infile, line)) {
-    std::istringstream iss(line); int n; std::vector<int> v;
-    while (iss >> n) v.push_back(n);
+  art::InputTag daq_tag{ vm["tag"].as<std::string>() };
+  std::vector<std::string> filenames(1, vm["Input"].as<std::string>());
+  
+  int eNum = 0;
+  for (gallery::Event e(filenames); !e.atEnd(); e.next()) {
+    auto& digits = *e.getValidHandle<std::vector<raw::RawDigit>>(daq_tag);
 
-    int ChannelNumber = v[1];
-    bool inU = false; bool inV = false; bool inZ = false;
-    for (auto const& it: Channels_U)
-      if (it == ChannelNumber) inU = true;
-    for (auto const& it: Channels_V)
-      if (it == ChannelNumber) inV = true;
-    for (auto const& it: Channels_Z)
-      if (it == ChannelNumber) inZ = true;
+    if (eNum != vm["nskip"].as<int>()) continue;
+    
+    if (vm.count("compressed")) {
+      for (auto const& digit: digits) {
+	// --- Uncompress the information
+      	raw::RawDigit::ADCvector_t ADCs(digit.Samples());
+	raw::Uncompress(digit.ADCs(), ADCs, digit.Compression());
 
-    if (inU) {
-      for (int i=3; i<v.size(); ++i) {
-	if (v[0] == event)
-	  eventDisplay_U->Fill(i, ChannelNumber, v[i]);
-      }}
-    if (inV) {
-      for (int i=3; i<v.size(); ++i) {
-	if (v[0] == event)
-	  eventDisplay_V->Fill(i, ChannelNumber, v[i]);
-      }}
-      if (inZ) {
-	for (int i=3; i<v.size(); ++i) {
-	  if (v[0] == event)
-	    eventDisplay_Z->Fill(i, ChannelNumber, v[i]);
-      }}
+	std::cout << digit.Channel() << std::endl;
+	
+      // 	for (auto const& channel: Channels_U) {
+      // 	  if (channel == digit.Channel()) {
+      // 	    for (size_t i=0; i<ADCs.size(); ++i) {
+      // 	      if (ADCs[i] == 0) { eventDisplay_U->Fill(i, channel, ADCs[i]);      }
+      // 	      else              { eventDisplay_U->Fill(i, channel, ADCs[i]-1800); }
+      // 	    }
+      // 	  }
+      // 	}
+
+      // 	for (auto const& channel: Channels_V) {
+      // 	  if (channel == digit.Channel()) {
+      // 	    for (size_t i=0; i<ADCs.size(); ++i) {
+      // 	      if (ADCs[i] == 0) { eventDisplay_V->Fill(i, channel, ADCs[i]);      }
+      // 	      else              { eventDisplay_V->Fill(i, channel, ADCs[i]-1800); }
+      // 	    }
+      // 	  }
+      // 	}
+
+      // 	for (auto const& channel: Channels_Z) {
+      // 	  if (channel == digit.Channel()) {
+      // 	    for (size_t i=0; i<ADCs.size(); ++i) {
+      // 	      if (ADCs[i] == 0) { eventDisplay_Z->Fill(i, channel, ADCs[i]);      }
+      // 	      else              { eventDisplay_Z->Fill(i, channel, ADCs[i]-500); }
+      // 	    }
+      // 	  }
+      // 	}
+      }
+
+    } else {
+
+    for (auto const& digit: digits) {
+      for (auto const& channel: Channels_U) {
+  	if (channel == digit.Channel()) {
+	  int uPedestal = 0;
+	  for (auto const& adc: digit.ADCs())
+	    uPedestal += adc;
+	  uPedestal /= digit.ADCs().size();
+  	  for (size_t i=0; i<digit.ADCs().size(); ++i) {
+  	    eventDisplay_U->Fill(i, channel, digit.ADCs()[i]-uPedestal);
+  	  }
+  	}
+      }
+
+      for (auto const& channel: Channels_V) {
+  	if (channel == digit.Channel()) {
+	  int vPedestal = 0;
+	  for (auto const& adc: digit.ADCs())
+	    vPedestal += adc;
+	  vPedestal /= digit.ADCs().size();
+  	  for (size_t i=0; i<digit.ADCs().size(); ++i) {
+	    eventDisplay_V->Fill(i, channel, digit.ADCs()[i]-vPedestal);
+  	  }
+  	}
+      }
+
+      for (auto const& channel: Channels_Z) {
+  	if (channel == digit.Channel()) {	  
+	  int zPedestal = 0;
+	  for (auto const& adc: digit.ADCs())
+	    zPedestal += adc;
+	  zPedestal /= digit.ADCs().size();
+  	  for (size_t i=0; i<digit.ADCs().size(); ++i) {
+	    eventDisplay_Z->Fill(i, channel, digit.ADCs()[i]-zPedestal);
+  	  }
+  	}
+      }
+
+    }
+
+
+
+    }
+    eNum++;
   }
 
   TCanvas *c = new TCanvas("c", "c", 1600, 900);
@@ -169,47 +250,32 @@ int main(int argc, char** argv) {
   TGraph *gU = new TGraph(n_u, t_u, c_u);
   TGraph *gV = new TGraph(n_v, t_v, c_v);
   TGraph *gZ = new TGraph(n_z, t_z, c_z);
-  
-  if (vm.count("only-hits")) {
-    gU->Draw("AP");
-    gU->SetTitle("U-Plane");
-    c->Print((vm["output"].as<std::string>() + ".pdf" ).c_str());
-    gV->Draw("AP");
-    gV->SetTitle("V-Plane");
-    c->Print((vm["output"].as<std::string>() + ".pdf" ).c_str());
-    gZ->Draw("AP");
-    gZ->SetTitle("Z-Plane");
-    c->Print((vm["output"].as<std::string>() + ".pdf" ).c_str());
-  }
+
   if (vm.count("plot-hits")) {
     PlotTH2D(eventDisplay_U);
+    gU->SetTitle("U-Plane");
     gU->Draw("P");
-    eventDisplay_U->SetTitle("U-Plane");
-    c->Print((vm["output"].as<std::string>() + ".pdf" ).c_str());
+    c->Print((vm["output"].as<std::string>() + ".pdf").c_str());
 
     PlotTH2D(eventDisplay_V);
+    gV->SetTitle("V-Plane");
     gV->Draw("P");
-    eventDisplay_V->SetTitle("V-Plane");
-    c->Print((vm["output"].as<std::string>() + ".pdf" ).c_str());
+    c->Print((vm["output"].as<std::string>() + ".pdf").c_str());
 
     PlotTH2D(eventDisplay_Z);
+    gZ->SetTitle("Z-Plane");
     gZ->Draw("P");
-    eventDisplay_Z->SetTitle("Z-Plane");
-    c->Print((vm["output"].as<std::string>() + ".pdf" ).c_str());
-  } 
-  if (!vm.count("plot-hits") && !vm.count("only-hits")) {
+    c->Print((vm["output"].as<std::string>() + ".pdf").c_str());
+    c->Print((vm["output"].as<std::string>() + ".pdf]").c_str());
+  } else {
     PlotTH2D(eventDisplay_U);
-    eventDisplay_U->SetTitle("U-Plane");
-    c->Print((vm["output"].as<std::string>() + ".pdf" ).c_str());
-
+    c->Print((vm["output"].as<std::string>() + ".pdf").c_str());
+    
     PlotTH2D(eventDisplay_V);
-    eventDisplay_V->SetTitle("V-Plane");
-    c->Print((vm["output"].as<std::string>() + ".pdf" ).c_str());
-
+    c->Print((vm["output"].as<std::string>() + ".pdf").c_str());
+    
     PlotTH2D(eventDisplay_Z);
-    eventDisplay_Z->SetTitle("Z-Plane");
-    c->Print((vm["output"].as<std::string>() + ".pdf" ).c_str());
+    c->Print((vm["output"].as<std::string>() + ".pdf").c_str());
+    c->Print((vm["output"].as<std::string>() + ".pdf]").c_str());
   }
-  c->Print((vm["output"].as<std::string>() + ".pdf]").c_str());
-
 }
