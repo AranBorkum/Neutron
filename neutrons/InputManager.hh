@@ -66,38 +66,40 @@ public:
   int SubRun;
   int Event ;
 
-  std::vector<int>         * True_Bck_PDG        ;
-  std::vector<int>         * True_Bck_Mother     ;
-  std::vector<int>         * True_Bck_EndProcess ;
-  std::vector<int>         * True_Bck_ID         ;
-  std::vector<double>      * True_Bck_VertX      ;
-  std::vector<double>      * True_Bck_VertY      ;
-  std::vector<double>      * True_Bck_VertZ      ;
-  std::vector<double>      * True_Bck_Time       ;
-  std::vector<double>      * True_Bck_Energy     ;
-  std::vector<double>      * True_Bck_EndE       ;
-  std::vector<double>      * True_Bck_EndX       ;
-  std::vector<double>      * True_Bck_EndY       ;
-  std::vector<double>      * True_Bck_EndZ       ;
-  std::vector<double>      * True_Bck_EndT       ;
-  std::vector<std::string> * True_Bck_EndMaterial;
+  std::vector<int>         * True_Bck_PDG          ;
+  std::vector<int>         * True_Bck_Mother       ;
+  std::vector<int>         * True_Bck_EndProcess   ;
+  std::vector<int>         * True_Bck_ID           ;
+  std::vector<double>      * True_Bck_VertX        ;
+  std::vector<double>      * True_Bck_VertY        ;
+  std::vector<double>      * True_Bck_VertZ        ;
+  std::vector<double>      * True_Bck_Time         ;
+  std::vector<double>      * True_Bck_Energy       ;
+  std::vector<double>      * True_Bck_EndE         ;
+  std::vector<double>      * True_Bck_EndX         ;
+  std::vector<double>      * True_Bck_EndY         ;
+  std::vector<double>      * True_Bck_EndZ         ;
+  std::vector<double>      * True_Bck_EndT         ;
+  std::vector<std::string> * True_Bck_StartMaterial;
+  std::vector<std::string> * True_Bck_EndMaterial  ;
 
   ~FullGeoAnaInputManager() {
-    delete True_Bck_PDG         ; True_Bck_PDG         = NULL;
-    delete True_Bck_Mother      ; True_Bck_Mother      = NULL;
-    delete True_Bck_EndProcess  ; True_Bck_EndProcess  = NULL;
-    delete True_Bck_ID          ; True_Bck_ID          = NULL;
-    delete True_Bck_VertX       ; True_Bck_VertX       = NULL;
-    delete True_Bck_VertY       ; True_Bck_VertY       = NULL;
-    delete True_Bck_VertZ       ; True_Bck_VertZ       = NULL;
-    delete True_Bck_Time        ; True_Bck_Time        = NULL;
-    delete True_Bck_Energy      ; True_Bck_Energy      = NULL;
-    delete True_Bck_EndE        ; True_Bck_EndE        = NULL;
-    delete True_Bck_EndX        ; True_Bck_EndX        = NULL;
-    delete True_Bck_EndY        ; True_Bck_EndY        = NULL;
-    delete True_Bck_EndZ        ; True_Bck_EndZ        = NULL;
-    delete True_Bck_EndT        ; True_Bck_EndT        = NULL;
-    delete True_Bck_EndMaterial ; True_Bck_EndMaterial = NULL;
+    delete True_Bck_PDG			; True_Bck_PDG			= NULL;
+    delete True_Bck_Mother		; True_Bck_Mother		= NULL;
+    delete True_Bck_EndProcess		; True_Bck_EndProcess		= NULL;
+    delete True_Bck_ID			; True_Bck_ID			= NULL;
+    delete True_Bck_VertX		; True_Bck_VertX		= NULL;
+    delete True_Bck_VertY		; True_Bck_VertY		= NULL;
+    delete True_Bck_VertZ		; True_Bck_VertZ		= NULL;
+    delete True_Bck_Time		; True_Bck_Time			= NULL;
+    delete True_Bck_Energy		; True_Bck_Energy		= NULL;
+    delete True_Bck_EndE		; True_Bck_EndE			= NULL;
+    delete True_Bck_EndX		; True_Bck_EndX			= NULL;
+    delete True_Bck_EndY		; True_Bck_EndY			= NULL;
+    delete True_Bck_EndZ		; True_Bck_EndZ			= NULL;
+    delete True_Bck_EndT		; True_Bck_EndT			= NULL;
+    delete True_Bck_StartMaterial	; True_Bck_StartMaterial	= NULL;
+    delete True_Bck_EndMaterial		; True_Bck_EndMaterial		= NULL;
 
     if (f_Input) f_Input->Close();
   };
@@ -107,21 +109,22 @@ public:
     SubRun(0),
     Event (0),
 
-    True_Bck_PDG        (NULL),
-    True_Bck_Mother     (NULL),
-    True_Bck_EndProcess (NULL),
-    True_Bck_ID         (NULL),
-    True_Bck_VertX      (NULL),
-    True_Bck_VertY      (NULL),
-    True_Bck_VertZ      (NULL),
-    True_Bck_Time       (NULL),
-    True_Bck_Energy     (NULL),
-    True_Bck_EndE       (NULL),
-    True_Bck_EndX       (NULL),
-    True_Bck_EndY       (NULL),
-    True_Bck_EndZ       (NULL),
-    True_Bck_EndT       (NULL),
-    True_Bck_EndMaterial(NULL) {
+    True_Bck_PDG		(NULL),
+    True_Bck_Mother		(NULL),
+    True_Bck_EndProcess		(NULL),
+    True_Bck_ID			(NULL),
+    True_Bck_VertX		(NULL),
+    True_Bck_VertY		(NULL),
+    True_Bck_VertZ		(NULL),
+    True_Bck_Time		(NULL),
+    True_Bck_Energy		(NULL),
+    True_Bck_EndE		(NULL),
+    True_Bck_EndX		(NULL),
+    True_Bck_EndY		(NULL),
+    True_Bck_EndZ		(NULL),
+    True_Bck_EndT		(NULL),
+    True_Bck_StartMaterial	(NULL),
+    True_Bck_EndMaterial	(NULL) {
 
     f_Input = NULL;
     t_Input = NULL;
@@ -136,21 +139,22 @@ public:
     t_Input->SetBranchAddress("Event" , &Event );
 
     if (t_Input->GetListOfBranches()->FindObject("True_Bck_PDG")) {
-      t_Input->SetBranchAddress("True_Bck_PDG"        , &True_Bck_PDG        );
-      t_Input->SetBranchAddress("True_Bck_Mother"     , &True_Bck_Mother     );
-      t_Input->SetBranchAddress("True_Bck_EndProcess" , &True_Bck_EndProcess );
-      t_Input->SetBranchAddress("True_Bck_ID"	      , &True_Bck_ID         );
-      t_Input->SetBranchAddress("True_Bck_VertX"      , &True_Bck_VertX      );
-      t_Input->SetBranchAddress("True_Bck_VertY"      , &True_Bck_VertY      );
-      t_Input->SetBranchAddress("True_Bck_VertZ"      , &True_Bck_VertZ      );
-      t_Input->SetBranchAddress("True_Bck_Time"	      , &True_Bck_Time       );
-      t_Input->SetBranchAddress("True_Bck_Energy"     , &True_Bck_Energy     );
-      t_Input->SetBranchAddress("True_Bck_EndE"	      , &True_Bck_EndE       );
-      t_Input->SetBranchAddress("True_Bck_EndX"	      , &True_Bck_EndX       );
-      t_Input->SetBranchAddress("True_Bck_EndY"	      , &True_Bck_EndY       );
-      t_Input->SetBranchAddress("True_Bck_EndZ"	      , &True_Bck_EndZ       );
-      t_Input->SetBranchAddress("True_Bck_EndT"	      , &True_Bck_EndT       );
-      t_Input->SetBranchAddress("True_Bck_EndMaterial", &True_Bck_EndMaterial);
+      t_Input->SetBranchAddress("True_Bck_PDG"			, &True_Bck_PDG			);
+      t_Input->SetBranchAddress("True_Bck_Mother"		, &True_Bck_Mother		);
+      t_Input->SetBranchAddress("True_Bck_EndProcess"		, &True_Bck_EndProcess		);
+      t_Input->SetBranchAddress("True_Bck_ID"			, &True_Bck_ID			);
+      t_Input->SetBranchAddress("True_Bck_VertX"		, &True_Bck_VertX		);
+      t_Input->SetBranchAddress("True_Bck_VertY"		, &True_Bck_VertY		);
+      t_Input->SetBranchAddress("True_Bck_VertZ"		, &True_Bck_VertZ		);
+      t_Input->SetBranchAddress("True_Bck_Time"			, &True_Bck_Time		);
+      t_Input->SetBranchAddress("True_Bck_Energy"		, &True_Bck_Energy		);
+      t_Input->SetBranchAddress("True_Bck_EndE"			, &True_Bck_EndE		);
+      t_Input->SetBranchAddress("True_Bck_EndX"			, &True_Bck_EndX		);
+      t_Input->SetBranchAddress("True_Bck_EndY"			, &True_Bck_EndY		);
+      t_Input->SetBranchAddress("True_Bck_EndZ"			, &True_Bck_EndZ		);
+      t_Input->SetBranchAddress("True_Bck_EndT"			, &True_Bck_EndT		);
+      t_Input->SetBranchAddress("True_Bck_StartMaterial"	, &True_Bck_StartMaterial	);
+      t_Input->SetBranchAddress("True_Bck_EndMaterial"		, &True_Bck_EndMaterial		);
     }
   };
 };
