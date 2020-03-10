@@ -1,0 +1,15 @@
+<sim name="neutron-FullGeo-Legacy">
+  <directory>/dune/data/users/aborkum/study_FullGeometry/ConsistenctComparison/Legacy/</directory>
+  <file>FullGeoAna_hist.root</file>
+  <tree>fullgeoana/FullGeoAna</tree>
+  <outdir>/dune/app/users/aborkum/Neutrons/output/Legacy/</outdir>
+  <analyzers>Capture,Validation0</analyzers>
+</sim>
+
+<sim name="neutron-FullGeo-OneCM">
+  <directory>/dune/data/users/aborkum/study_FullGeometry/ConsistenctComparison/OneCM/</directory>
+  <file>FullGeoAna_hist.root</file>
+  <tree>fullgeoana/FullGeoAna</tree>
+  <outdir>/dune/app/users/aborkum/Neutrons/output/OneCM/</outdir>
+  <analyzers>Capture,Validation1</analyzers>
+</sim>
