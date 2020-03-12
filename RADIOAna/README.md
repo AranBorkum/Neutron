@@ -21,7 +21,7 @@ This process produces outputs that show the capture location and various kinemat
 ##### ValidationAna
 The process is desigend to show that the simulation is running as expected. It looks at which regions of the detector neutrons are being produced. It also looks at from which region the neutrons that ultimatly contribute to the overall capture rate come from. This is important in validating the production configuration. It also calculates the neutron flux per unit area to make sure we're simulating the correct physics
 
-### Future updates
+### Future planned updates
 - Write a file, most likely in python, to construct a `RADIOAna.cxx` file given the contents of the `Analyzers/` directory and the functions within the files.
 - Write an analyzer that works on hit level information to test the detector responce to neutron capture photon emissions
 - Write an analyzer that performs clustering and calculates a capture rate based on the clusters associated with neutrons
