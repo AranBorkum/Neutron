@@ -2,10 +2,13 @@
 #include <fstream>
 #include <unistd.h>
 
-#include "XMLParser.hh"
-#include "CaptureAnalyzer.hh"
-#include "ValidationAnalyzer.hh"
-#include "GeometricAnalyzer.hh"
+#include "Utilities/XMLParser.hh"
+#include "Utilities/Helper.h"
+#include "Utilities/ProgressTable.hh"
+
+#include "Analyzers/CaptureAnalyzer.hh"
+#include "Analyzers/ValidationAnalyzer.hh"
+#include "Analyzers/GeometricAnalyzer.hh"
 
 #include "boost/program_options.hpp"
 
@@ -40,11 +43,13 @@ int main(int argc, char** argv) {
   }
 
   std::vector<ParsedXML> xmls = XMLParser(vm["config"].as<std::string>());
+  ProgressTable ProgTable = ProgressTable(xmls); ProgTable.Create();
+
   for (int i=0; i<xmls.size(); ++i) {
-    std::cout << "Running " << xmls[i].GetAnalyzer() << " on " << xmls[i].GetSim();
+    ProgTable.Update();
     RunAnalyzer(xmls[i], vm);	
-    std::cout << "\tDONE \u2713" << std::endl;
-  }
+  } 
+  ProgTable.Update();
 
   return 0;
 

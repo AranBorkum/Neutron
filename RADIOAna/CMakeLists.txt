@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.6)
-project(eventDisplay CXX)
+project(RADIOAna CXX)
 find_package( ZLIB REQUIRED )
 include_directories($ENV{BOOST_INC})
 include_directories($ENV{CANVAS_INC})
