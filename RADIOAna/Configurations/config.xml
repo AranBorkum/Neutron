@@ -1,0 +1,23 @@
+<sim name="neutron-FullGeo-Legacy">
+  <directory>/pnfs/dune/scratch/users/aborkum/v08_43_00/mergeana/aborkum_prodbackground_legacy_larfd/</directory>
+  <file>anahist.root</file>
+  <tree>fullgeoana/FullGeoAna</tree>
+  <outdir>/dune/app/users/aborkum/Neutrons/output/Legacy/</outdir>
+  <analyzers>Capture,Validation0</analyzers>
+</sim>
+
+<sim name="neutron-FullGeo-OneCM">
+  <directory>/pnfs/dune/scratch/users/aborkum/v08_43_00/mergeana/aborkum_prodbackground_rn1cm_larfd/</directory>
+  <file>anahist.root</file>
+  <tree>fullgeoana/FullGeoAna</tree>
+  <outdir>/dune/app/users/aborkum/Neutrons/output/OneCM/</outdir>
+  <analyzers>Capture,Validation1</analyzers>
+</sim>
+
+<sim name="neutron-FullGeo-ThirtyCM">
+  <directory>/pnfs/dune/scratch/users/aborkum/v08_43_00/mergeana/aborkum_prodbackground_rn30cm_larfd/</directory>
+  <file>anahist.root</file>
+  <tree>fullgeoana/FullGeoAna</tree>
+  <outdir>/dune/app/users/aborkum/Neutrons/output/ThirtyCM/</outdir>
+  <analyzers>Capture,Validation1</analyzers>
+</sim>
